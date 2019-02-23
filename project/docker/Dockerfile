@@ -4,7 +4,7 @@ MAINTAINER Benedict Lau <benedict.lau@groundupworks.com>
 RUN apk add --no-cache nodejs nginx socat
 
 RUN apk add --no-cache --virtual .build libtool nodejs-npm autoconf automake build-base python git &&  \
-    npm install scuttlebot \
+    npm install ssb-server \
                 ssb-keys \
                 ssb-client \
                 ssb-feed \
