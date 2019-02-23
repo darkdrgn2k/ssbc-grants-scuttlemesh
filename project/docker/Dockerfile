@@ -37,7 +37,7 @@ RUN apk add --no-cache --virtual .build libtool nodejs-npm autoconf automake bui
                 base64-url \
                 ssb-backlinks \
                 ssb-private \
-                     --unsafe-perm;
+                    -g --unsafe-perm;
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY ssb-broadcast.sh /usr/local/bin/ssb-broadcast.sh
@@ -46,7 +46,7 @@ COPY start-docker.sh /usr/local/bin/start-docker.sh
 RUN mkdir /run/nginx; \
     apk add --no-cache --virtual .git git; \
     (sbot server &); \
-    sleep 5 ;\
+    sleep 10 ;\
     cd ~/.ssb/node_modules;  \
     git clone https://github.com/ssbc/patchfoo.git patchfoo; \
     sbot plugins.install ssb-private; \
