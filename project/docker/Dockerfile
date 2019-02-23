@@ -10,6 +10,8 @@ RUN apk add --no-cache --virtual .build libtool nodejs-npm autoconf automake bui
                 ssb-feed \
                 pull-stream \
                     -g --unsafe-perm ; \
+    mkdir -p ~/.ssb/node_modules ; \
+    cd ~/.ssb/node_modules ; \
     npm install asyncmemo \
                 hashlru \
                 pull-stream \
@@ -47,7 +49,6 @@ RUN mkdir /run/nginx; \
     apk add --no-cache --virtual .git git; \
     (sbot server &); \
     sleep 10 ;\
-    cd ~/.ssb/node_modules;  \
     git clone https://github.com/ssbc/patchfoo.git patchfoo; \
     sbot plugins.install ssb-private; \
     sbot plugins.install ssb-backlinks; \
