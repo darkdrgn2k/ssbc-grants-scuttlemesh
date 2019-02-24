@@ -9,7 +9,7 @@ RUN apk add --no-cache --virtual .build libtool nodejs-npm autoconf automake bui
                 ssb-client \
                 ssb-feed \
                 pull-stream \
-                    -g --unsafe-perm ; \
+                    --unsafe-perm ; \
     mkdir -p ~/.ssb/node_modules ; \
     cd ~/.ssb/node_modules ; \
     npm install asyncmemo \
@@ -45,19 +45,21 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY ssb-broadcast.sh /usr/local/bin/ssb-broadcast.sh
 COPY start-docker.sh /usr/local/bin/start-docker.sh
 
-RUN mkdir /run/nginx; \
-    apk add --no-cache --virtual .git git; \
-    (sbot server &); \
-    sleep 10 ;\
-    git clone https://github.com/ssbc/patchfoo.git patchfoo; \
-    sbot plugins.install ssb-private; \
-    sbot plugins.install ssb-backlinks; \
-    sbot plugins.enable patchfoo; \
-    sed -i 's#var Git#//var Git#' patchfoo/lib/app.js  patchfoo/lib/app.js; \
-    sed -i 's#this.git = new Git(this.sbot, this.config)#//this.git = new Git(this.sbot, this.config)#' patchfoo/lib/app.js
-
 EXPOSE 80
 EXPOSE 8008
 EXPOSE 8989
+
+RUN mkdir /run/nginx; \
+    ln -s /node_modules/ssb-server/bin.js /usr/bin/ssb-server ;\ 
+    apk add --no-cache --virtual .git git; \
+    (ssb-server start --verbose &); \
+    sleep 20 ; \
+    netstat -l -n ;\
+    ssb-server --verbose --logging.level info plugins.install ssb-private; \
+    ssb-server --logging.level info plugins.install ssb-backlinks; \
+    ssb-server --logging.level info plugins.enable patchfoo; \
+    git clone https://github.com/ssbc/patchfoo.git patchfoo; \
+    sed -i 's#var Git#//var Git#' patchfoo/lib/app.js  patchfoo/lib/app.js; \
+    sed -i 's#this.git = new Git(this.sbot, this.config)#//this.git = new Git(this.sbot, this.config)#' patchfoo/lib/app.js
 
 ENTRYPOINT /usr/local/bin/start-docker.sh
